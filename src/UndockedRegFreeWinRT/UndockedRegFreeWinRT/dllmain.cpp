@@ -289,17 +289,12 @@ HRESULT WINAPI RoGetMetaDataFileDetour(
     HSTRING* metaDataFilePath,
     IMetaDataImport2** metaDataImport,
     mdTypeDef* typeDefToken)
-{
-    std::cout << "dispenser " << metaDataDispenser << std::endl;
-    std::cout << "filepath " << metaDataFilePath << std::endl;
-    std::cout << "import " << metaDataImport << std::endl;
-    unsigned int size;
-    wchar_t const* buffer = WindowsGetStringRawBuffer(name, &size);
-    std::wcout << std::wstring(buffer, size).c_str() << std::endl;
+{;
+    std::cout << "Calling TrueRoGetMetaDataFile" << std::endl;
     HRESULT hr = WinRTGetMetadataFile(name, metaDataDispenser, metaDataFilePath, metaDataImport, typeDefToken);
+    std::cout << hr << std::endl;
     if (FAILED(hr))
     {
-        std::cout << hr << std::endl;
         std::cout << "Calling TrueRoGetMetaDataFile" << std::endl;
        //wil::unique_process_heap_string localExePath;
        //HRESULT hr = wil::GetModuleFileNameW(nullptr, localExePath);
@@ -344,14 +339,15 @@ HRESULT WINAPI RoResolveNamespaceDetour(
         1, packageGraphDirs2,
         metaDataFilePathsCount, metaDataFilePaths,
         subNamespacesCount, subNamespaces);
-
+    std::wcout << hr << std::endl;
     if (FAILED(hr))
     {
-        std::wcout << "Calling TrueRoResolveNamespace  " << hr << std::endl;
+        std::wcout << "Calling TrueRoResolveNamespace  " << std::endl;
         hr = TrueRoResolveNamespace(name, windowsMetaDataDir,
             packageGraphDirsCount, packageGraphDirs,
             metaDataFilePathsCount, metaDataFilePaths,
             subNamespacesCount, subNamespaces);
+        std::wcout << hr << std::endl;
     }
     return hr;
 }
