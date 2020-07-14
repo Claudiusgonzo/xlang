@@ -20,6 +20,15 @@ TEST_CASE("Undocked Regfree WinRT Activation")
 {
     RegFreeWinRTInitializeForTest();
 
+
+    SECTION("Cross Apartment MTA Activation")
+    {
+        winrt::init_apartment(winrt::apartment_type::single_threaded);
+        winrt::TestComponent::ClassMta c;
+        REQUIRE(c.Apartment() == APTTYPE_MTA);
+        winrt::clear_factory_cache();
+        winrt::uninit_apartment();
+    }
     SECTION("Test Get Metadata File")
     {
         HString result;
