@@ -336,45 +336,12 @@ HRESULT WINAPI RoResolveNamespaceDetour(
     HSTRING** subNamespaces)
 {
     std::wcout << "Diagnostics " << std::endl;
-    HSTRING exepath = Microsoft::WRL::Wrappers::HStringReference(exeFilePath.c_str()).Get();
-    bool fFileExists = true;
-    DWORD dwFileAttributes;
-    dwFileAttributes = GetFileAttributes(L"TestComponent.winmd");
-    if ((dwFileAttributes == INVALID_FILE_ATTRIBUTES) ||
-        (dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-    {
-        fFileExists = false;
-    }
-    if (fFileExists)
-    {
-        std::wcout << "TestComponent exists " << std::endl;
-    }
-    else
-    {
-        std::wcout << "TestComponent does not exists " << std::endl;
-    }
-    CoInitialize(nullptr);
-    mdTypeDef cl;
-    wchar_t szMetaDataFile[MAX_PATH + 1] = { 0 };
-    IMetaDataDispenserEx* pMetaDataDispenser = nullptr;
-    IMetaDataImport2* pMetaDataImport = nullptr;
-    RETURN_IF_FAILED(CoCreateInstance(
-        CLSID_CorMetaDataDispenser,
-        nullptr,
-        CLSCTX_INPROC_SERVER,
-        IID_IMetaDataDispenserEx,
-        reinterpret_cast<void**>(&pMetaDataDispenser)));
-
-    RETURN_IF_FAILED(pMetaDataDispenser->OpenScope(
-        L"TestComponent.winmd",
-        ofReadOnly,
-        IID_IMetaDataImport2,
-        reinterpret_cast<IUnknown**>(&pMetaDataImport)));
-    RETURN_IF_FAILED(pMetaDataImport->FindTypeDefByName(L"TestComponent.ClassSta", mdTokenNil, &cl));
 
     std::wcout << "Calling RoResolveNamespaceDetour " << std::endl;
-    HRESULT hr = TrueRoResolveNamespace(name, exepath,
-        packageGraphDirsCount, packageGraphDirs,
+    HSTRING packageGraphDirs2[1];
+    packageGraphDirs2[0] = Microsoft::WRL::Wrappers::HStringReference(exeFilePath.c_str()).Get();
+    HRESULT hr = TrueRoResolveNamespace(name, Microsoft::WRL::Wrappers::HStringReference(exeFilePath.c_str()).Get(),
+        packageGraphDirsCount, packageGraphDirs2,
         metaDataFilePathsCount, metaDataFilePaths,
         subNamespacesCount, subNamespaces);
 
